@@ -25,11 +25,11 @@ CREATE TABLE Ansatt (
     AnsNr INTEGER,
     Fornavn VARCHAR(50) NOT NULL ,
     Etternavn VARCHAR(50) NOT NULL ,
-    Adresse VARCHAR(50) NOT NULL ,
+    Adresse VARCHAR(50) ,
     Foodselsdato DATE NOT NULL ,
     Kjoonn CHAR(1) ,
     Stilling VARCHAR(50) NOT NULL ,
-    Aarsloonn NUMERIC(8,2)  NOT NULL ,
+    Aarsloonn NUMERIC(8,2)  ,
     PostNr INTEGER NOT NULL ,
     CONSTRAINT ansatt_pkey PRIMARY KEY (AnsNr) ,
     CONSTRAINT postnr_fkey FOREIGN KEY (PostNr) REFERENCES Poststed (PostNr) ON UPDATE CASCADE
