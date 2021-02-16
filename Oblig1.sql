@@ -9,7 +9,6 @@ DROP TABLE Poststed;
 DROP TABLE Kategori;
 
 /*Oppretter Tabellene*/
-
 CREATE TABLE Kategori (
     KatNr SMALLINT UNIQUE ,
     Navn VARCHAR(20) NOT NULL ,
@@ -89,12 +88,12 @@ CREATE TABLE Prishistorikk (
 /*Setter inn "en linje" i hver tabell*/
 INSERT INTO Kategori VALUES (1, 'Kategori');
 INSERT INTO Poststed VALUES (1337, 'PostSted');
-INSERT INTO Ansatt VALUES (81840, 'Nordmann', 'Ola' , 'Svingen 1', 01-07-1997, 'J', 'Sjef', 500000, 04-20-1969);
+INSERT INTO Ansatt VALUES (81840, 'Nordmann', 'Ola' , 'Svingen 1', '01-07-1997', 'J', 'Sjef', 500000, 1337);
 INSERT INTO Vare VALUES (1, 'Banan', 5.50, 5 , 'H13', 1);
 INSERT INTO Kunde VALUES (52135, 'Nordmann', 'Ole' , 'Svingen 2', 1337);
-INSERT INTO Ordre VALUES (1,02-02-2021, null, null, 52135);
+INSERT INTO Ordre VALUES (1,'02-02-2021', null, null, 52135);
 INSERT INTO OrdreLinje VALUES (1, 1, 5.50, 1);
-INSERT INTO Prishistorikk VALUES (1,02-02-2021, 5.45);
+INSERT INTO Prishistorikk VALUES (1,'02-02-2021', 5.45);
 
 /*Legger til en kolonne AnsattDato i Ansatt*/
 ALTER TABLE Ansatt ADD Ansattdato DATE;
@@ -104,7 +103,11 @@ ALTER TABLE Ansatt ADD Ansattdato DATE;
 
 
 /*Viser alle salg og produkter for hvert salg, for hver enkelt kunde*/
-SELECT
+SELECT KNr, Betegnelse, OrdreLinje.OrdreNr, Ordrelinje.VNr, PrisPrEnhet, Ordrelinje.Antall
+FROM Ordre FULL OUTER JOIN (
+    Vare FULL OUTER JOIN OrdreLinje
+    ON Vare.VNr = Ordrelinje.VNr)ON Ordrelinje.ordrenr = Ordre.ordrenr;
 
 /*Viser antall salg og total verdi av salg gruppert etter postnr, inkluder også poststed som egen kolonne,
   sorter etter poststed synkende*/
+
