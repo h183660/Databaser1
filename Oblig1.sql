@@ -1,24 +1,24 @@
 /*Sletter Tabeller sann scriptet kan kjøres flere ganger*/
-DROP TABLE Kategori;
-DROP TABLE Poststed;
-DROP TABLE Ansatt;
-DROP TABLE Vare;
-DROP TABLE Kunde;
-DROP TABLE Ordre;
-DROP TABLE OrdreLinje;
 DROP TABLE Prishistorikk;
+DROP TABLE OrdreLinje;
+DROP TABLE Ordre;
+DROP TABLE Kunde;
+DROP TABLE Vare;
+DROP TABLE Ansatt;
+DROP TABLE Poststed;
+DROP TABLE Kategori;
 
 /*Oppretter Tabellene*/
 
 CREATE TABLE Kategori (
-    KatNr SMALLINT NOT NULL UNIQUE ,
+    KatNr SMALLINT UNIQUE ,
     Navn VARCHAR(20) NOT NULL ,
     CONSTRAINT kategori_pkey PRIMARY KEY (KatNr)
 );
 
 CREATE TABLE Poststed (
-    PostNr INTEGER,
-    Poststed VARCHAR(50) NOT NULL UNIQUE ,
+    PostNr SMALLINT,
+    Poststed VARCHAR(50) NOT NULL ,
     CONSTRAINT postnr_pkey PRIMARY KEY (PostNr)
 );
 
@@ -37,7 +37,7 @@ CREATE TABLE Ansatt (
 );
 
 CREATE TABLE Vare (
-    VNr INTEGER NOT NULL ,
+    VNr INTEGER ,
     Betegnelse VARCHAR(20) NOT NULL UNIQUE ,
     Pris DECIMAL(8,2) NOT NULL ,
     Antall INTEGER NOT NULL ,
@@ -69,7 +69,7 @@ CREATE TABLE Ordre (
 );
 
 CREATE TABLE OrdreLinje (
-    OrdreNr INTEGER NOT NULL ,
+    OrdreNr INTEGER ,
     VNr INTEGER REFERENCES Vare (VNr) NOT NULL ,
     PrisPrEnhet DECIMAL(8,2) NOT NULL  ,
     Antall SMALLINT NOT NULL ,
@@ -89,7 +89,7 @@ CREATE TABLE Prishistorikk (
 /*Setter inn "en linje" i hver tabell*/
 INSERT INTO Kategori VALUES (1, 'Kategori');
 INSERT INTO Poststed VALUES (1337, 'PostSted');
-INSERT INTO Ansatt VALUES (81840, 'Nordmann', 'Ola' , 'Svingen 1', 01-07-1997, 'J', 'Sjef', 500000, 1337);
+INSERT INTO Ansatt VALUES (81840, 'Nordmann', 'Ola' , 'Svingen 1', 01-07-1997, 'J', 'Sjef', 500000, 04-20-1969);
 INSERT INTO Vare VALUES (1, 'Banan', 5.50, 5 , 'H13', 1);
 INSERT INTO Kunde VALUES (52135, 'Nordmann', 'Ole' , 'Svingen 2', 1337);
 INSERT INTO Ordre VALUES (1,02-02-2021, null, null, 52135);
@@ -97,3 +97,14 @@ INSERT INTO OrdreLinje VALUES (1, 1, 5.50, 1);
 INSERT INTO Prishistorikk VALUES (1,02-02-2021, 5.45);
 
 /*Legger til en kolonne AnsattDato i Ansatt*/
+ALTER TABLE Ansatt ADD Ansattdato DATE;
+/*Kan ikke bruke NOT NULL ettersom vi legger til kolonnen etter vi har laget tabellen og satt inn verdier,
+  hadde vi brukt AnsattDato fra begynnelsen hadde vi ikke tilatt nullmerker ettersom vi kommer alltid til å
+   vite når en ansatt startet i jobben fra første dag.*/
+
+
+/*Viser alle salg og produkter for hvert salg, for hver enkelt kunde*/
+SELECT
+
+/*Viser antall salg og total verdi av salg gruppert etter postnr, inkluder også poststed som egen kolonne,
+  sorter etter poststed synkende*/
