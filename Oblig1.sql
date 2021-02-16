@@ -153,7 +153,14 @@ INSERT INTO OrdreLinje VALUES (7, 1, 5.50, 1);
 SELECT KNr, Betegnelse, OrdreLinje.OrdreNr, Ordrelinje.VNr, PrisPrEnhet, Ordrelinje.Antall
 FROM Ordre FULL OUTER JOIN (
     Vare FULL OUTER JOIN OrdreLinje
-    ON Vare.VNr = Ordrelinje.VNr)ON Ordrelinje.ordrenr = Ordre.ordrenr;
+    ON Vare.VNr = Ordrelinje.VNr)
+    ON Ordrelinje.ordrenr = Ordre.ordrenr;
 
 /*Viser antall salg og total verdi av salg gruppert etter postnr, inkluder også poststed som egen kolonne,
   sorter etter poststed synkende*/
+SELECT count(Ordre.OrdreNr) AS AntallSalg,
+       sum(OrdreLinje.PrisPrEnhet*OrdreLinje.Antall) AS TotalVerdi, Poststed.Poststed
+FROM Poststed INNER JOIN (
+    Ordre INNER JOIN OrdreLinje
+    ON Ordre.OrdreNr = Ordrelinje.OrdreNr) INNER JOIN Kunde ON Ordre.KNr = Kunde.KNr  ON Kunde.PostNr = Poststed.PostNr
+GROUP BY Poststed.Poststed;
