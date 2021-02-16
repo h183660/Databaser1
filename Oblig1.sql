@@ -29,21 +29,21 @@ CREATE TABLE Ansatt (
     Foodselsdato DATE NOT NULL ,
     Kjoonn CHAR(1) ,
     Stilling VARCHAR(50) NOT NULL ,
-    Aarsloonn INTEGER NOT NULL ,
+    Aarsloonn NUMERIC(8,2)  NOT NULL ,
     PostNr INTEGER NOT NULL ,
     CONSTRAINT ansatt_pkey PRIMARY KEY (AnsNr) ,
-    CONSTRAINT postnr_fkey FOREIGN KEY (PostNr) REFERENCES Poststed (PostNr)
+    CONSTRAINT postnr_fkey FOREIGN KEY (PostNr) REFERENCES Poststed (PostNr) ON UPDATE CASCADE
 );
 
 CREATE TABLE Vare (
     VNr INTEGER ,
     Betegnelse VARCHAR(20) NOT NULL UNIQUE ,
-    Pris DECIMAL(8,2) NOT NULL ,
+    Pris NUMERIC(8,2)  NOT NULL ,
     Antall INTEGER NOT NULL ,
     Hylle CHAR(3) NOT NULL ,
     KatNr SMALLINT NOT NULL ,
     CONSTRAINT varenr_pkey PRIMARY KEY (VNr) ,
-    CONSTRAINT kategorinr_fkey FOREIGN KEY (KatNr) REFERENCES Kategori (KatNr)
+    CONSTRAINT kategorinr_fkey FOREIGN KEY (KatNr) REFERENCES Kategori (KatNr) ON UPDATE CASCADE
 );
 
 CREATE TABLE Kunde (
@@ -64,25 +64,25 @@ CREATE TABLE Ordre (
     BetaltDato DATE ,
     KNr INTEGER NOT NULL ,
     CONSTRAINT ordrenr_pkey PRIMARY KEY (OrdreNr) ,
-    CONSTRAINT kundenr_fkey FOREIGN KEY (KNr) REFERENCES Kunde (KNr)
+    CONSTRAINT kundenr_fkey FOREIGN KEY (KNr) REFERENCES Kunde (KNr) ON DELETE CASCADE
 );
 
 CREATE TABLE OrdreLinje (
     OrdreNr INTEGER ,
     VNr INTEGER REFERENCES Vare (VNr) NOT NULL ,
-    PrisPrEnhet DECIMAL(8,2) NOT NULL  ,
+    PrisPrEnhet NUMERIC(8,2)  NOT NULL  ,
     Antall SMALLINT NOT NULL ,
     CONSTRAINT ordenlinje_pkey PRIMARY KEY (OrdreNr,VNr) ,
-    CONSTRAINT varenr_fkey FOREIGN KEY (VNr) REFERENCES Vare (VNr),
-    CONSTRAINT ordrenr_fkey FOREIGN KEY (OrdreNr) REFERENCES Ordre (OrdreNr)
+    CONSTRAINT varenr_fkey FOREIGN KEY (VNr) REFERENCES Vare (VNr) ON DELETE CASCADE,
+    CONSTRAINT ordrenr_fkey FOREIGN KEY (OrdreNr) REFERENCES Ordre (OrdreNr) ON DELETE CASCADE
 );
 
 CREATE TABLE Prishistorikk (
     VNr INTEGER ,
     Dato DATE  ,
-    GammelPris DECIMAL(8,2) NOT NULL ,
+    GammelPris NUMERIC(8,2) NOT NULL ,
     CONSTRAINT varenrprishistorikk_pkey PRIMARY KEY (VNr) ,
-    CONSTRAINT varenr_fkey FOREIGN KEY (VNr) REFERENCES Vare (VNr)
+    CONSTRAINT varenr_fkey FOREIGN KEY (VNr) REFERENCES Vare (VNr) ON DELETE CASCADE
 );
 
 /*Setter inn "en linje" i hver tabell*/
@@ -158,9 +158,12 @@ FROM Ordre FULL OUTER JOIN (
 
 /*Viser antall salg og total verdi av salg gruppert etter postnr, inkluder også poststed som egen kolonne,
   sorter etter poststed synkende*/
-SELECT count(Ordre.OrdreNr) AS AntallSalg,
+SELECT count(DISTINCT Ordre.OrdreNr) AS AntallSalg,
        sum(OrdreLinje.PrisPrEnhet*OrdreLinje.Antall) AS TotalVerdi, Poststed.Poststed
 FROM Poststed INNER JOIN (
     Ordre INNER JOIN OrdreLinje
-    ON Ordre.OrdreNr = Ordrelinje.OrdreNr) INNER JOIN Kunde ON Ordre.KNr = Kunde.KNr  ON Kunde.PostNr = Poststed.PostNr
-GROUP BY Poststed.Poststed;
+    ON Ordre.OrdreNr = Ordrelinje.OrdreNr)
+    INNER JOIN Kunde ON Ordre.KNr = Kunde.KNr
+    ON Kunde.PostNr = Poststed.PostNr
+GROUP BY Poststed.Poststed
+ORDER BY Poststed ASC;
