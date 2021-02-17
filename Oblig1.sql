@@ -30,7 +30,7 @@ CREATE TABLE Ansatt (
     Kjoonn CHAR(1) ,
     Stilling VARCHAR(50) NOT NULL ,
     Aarsloonn NUMERIC(8,2)  ,
-    PostNr INTEGER  ,
+    PostNr SMALLINT  ,
     CONSTRAINT ansatt_pkey PRIMARY KEY (AnsNr) ,
     CONSTRAINT postnr_fkey FOREIGN KEY (PostNr) REFERENCES Poststed (PostNr) ON UPDATE CASCADE
 );
@@ -50,13 +50,12 @@ CREATE TABLE Kunde (
     KNr INTEGER  ,
     Fornavn VARCHAR(50) NOT NULL ,
     Etternavn VARCHAR(50) NOT NULL ,
-    Adresse VARCHAR(50) NOT NULL ,
-    PostNr INTEGER NOT NULL ,
+    Adresse VARCHAR(50) ,
+    PostNr SMALLINT ,
     CONSTRAINT kundenr_pkey PRIMARY KEY (KNr) ,
     CONSTRAINT postnr_fkey FOREIGN KEY (PostNr) REFERENCES Poststed (PostNr)
 );
 
-/*Lar SendtDato og Betalt dato være null til de får en verdi når varen blir sendt eller betalt.*/
 CREATE TABLE Ordre (
     OrdreNr  INTEGER ,
     OrdreDato DATE NOT NULL ,
