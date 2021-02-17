@@ -53,7 +53,7 @@ CREATE TABLE Kunde (
     Adresse VARCHAR(50) ,
     PostNr SMALLINT ,
     CONSTRAINT kundenr_pkey PRIMARY KEY (KNr) ,
-    CONSTRAINT postnr_fkey FOREIGN KEY (PostNr) REFERENCES Poststed (PostNr)
+    CONSTRAINT postnr_fkey FOREIGN KEY (PostNr) REFERENCES Poststed (PostNr) ON UPDATE CASCADE
 );
 
 CREATE TABLE Ordre (
